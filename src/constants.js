@@ -1,0 +1,1 @@
+export const server = "https://backend-v1-inky.vercel.app/api/v1"
