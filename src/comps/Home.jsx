@@ -25,7 +25,7 @@ const Home = () => {
 
     if (isLoggedIn) {
       getVideos();
-    }
+    } else setVideos([]);
   }, [isLoggedIn]);
 
   return (
@@ -46,7 +46,9 @@ const Home = () => {
         </div>
       ) : (
         <div className="bg-black h-full p-3">
-        {videos.map((video) => <VideoCard key={video._id} video={video} />)}
+          {videos.map((video) => (
+            <VideoCard key={video._id} video={video} />
+          ))}
         </div>
       )}
     </>
