@@ -23,11 +23,11 @@ const VideoCard = ({ video }) => {
   };
 
   return (
-    <div className="flex mb-4 bg-black rounded-lg overflow-hidden gap-2">
+    <div className="flex mb-4 bg-black  overflow-hidden gap-2">
       <img
         src={video.thumbnail.url}
         alt={video.title}
-        className="w-1/4 h-auto object-cover"
+        className="w-1/4 h-[210px] object-cover"
       />
       <div className="w-3/4 ">
         <h2 className="text-xl text-white font-bold mb-2">{video.title}</h2>
