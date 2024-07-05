@@ -16,13 +16,13 @@ function App() {
         <Navbar />
         <div className="flex h-screen transition-all duration-500">
           <div
-            className={`transition-all duration-500 ${
+            className={`transition-all duration-500 no-scrollbar overflow-y-auto ${
               isExpanded ? "w-64" : "w-20"
             }`}
           >
             <Sidebar isExpanded={isExpanded} toggleSidebar={toggleSidebar} />
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 no-scrollbar overflow-y-auto">
             <Outlet />
           </div>
         </div>

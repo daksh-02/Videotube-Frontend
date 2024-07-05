@@ -37,7 +37,7 @@ const Video = () => {
           setCur(profile)
         }
         const response = await axios.get(
-          `${server}/videos/${
+          `${server}/videos/allVideos/${
             profile.charAt(0) === ":" ? profile.substring(1) : profile
           }`,
           {
@@ -91,7 +91,7 @@ const Video = () => {
   };
 
   return (
-    <div className="w-full px-4 bg-black text-white min-h-[50vh]">
+    <div className="w-full px-4 bg-black text-white min-h-[50vh] ">
       {flag ? (
         <div className="flex w-full py-4">
           <VideoUploadDialog onUploadComplete={handleUploadComplete} />
