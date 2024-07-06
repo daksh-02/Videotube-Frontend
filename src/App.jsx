@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 import Navbar from "./navbar/Navbar.jsx";
 import Sidebar from "./comps/Sidebar.jsx";
 import { Outlet } from "react-router-dom";
+
+export const SidebarContext = createContext();
 
 function App() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -11,7 +13,7 @@ function App() {
   };
 
   return (
-    <>
+    <SidebarContext.Provider value={isExpanded}>
       <div>
         <Navbar />
         <div className="flex h-screen transition-all duration-500">
@@ -27,7 +29,7 @@ function App() {
           </div>
         </div>
       </div>
-    </>
+    </SidebarContext.Provider>
   );
 }
 

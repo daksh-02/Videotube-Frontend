@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import PlayerDetail from "./PlayerDetails";
 import { FaRegPlayCircle } from "react-icons/fa";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const VideoPlayer = () => {
   const { videoId } = useParams();
@@ -33,37 +34,37 @@ const VideoPlayer = () => {
 
   return (
     <div className="bg-black shadow-lg">
-      {isPlaying ? (
-        <ReactPlayer
-          url={video ? video.videoFile.url : defaultVideoUrl}
-          controls
-          width="100%"
-          height="540px"
-          playing={true}
-          className="bg-black rounded-t-lg"
-        />
-      ) : (
-        <div
-          className="relative w-full h-96 bg-black cursor-pointer"
-          onClick={handleThumbnailClick}
-          style={{
-            backgroundImage: `url(${
-              video ? video.thumbnail.url : "default_thumbnail.png"
-            })`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button className="text-white text-4xl"><FaRegPlayCircle size = {75}/></button>
+      <AspectRatio ratio={16 / 9}>
+        {!isPlaying ? (
+          <div
+            className="relative w-full h-full cursor-pointer"
+            onClick={handleThumbnailClick}
+          >
+            <img
+              src={video ? video.thumbnail.url : "default_thumbnail.png"}
+              alt="Thumbnail"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button className="text-white text-4xl">
+                <FaRegPlayCircle size={75} />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-
-      <PlayerDetail video={video}/>
-      
+        ) : (
+          <ReactPlayer
+            url={video ? video.videoFile.url : defaultVideoUrl}
+            controls
+            width="100%"
+            height="100%"
+            playing={true}
+            className="absolute inset-0 bg-black"
+          />
+        )}
+      </AspectRatio>
+      <PlayerDetail video={video} />
     </div>
   );
 };
 
-export default VideoPlayer
+export default VideoPlayer;

@@ -120,7 +120,7 @@ const PlayerDetail = ({ video }) => {
             <h1 className="text-white text-2xl font-bold mt-2 overflow-hidden text-ellipsis max-w-full">
               {video ? video.title : "Default Video Title"}
             </h1>
-            <div className="text-gray-400 flex items-center space-x-2 mt-2">
+            <div className="text-white flex items-center space-x-2 mt-2">
               <span>{video ? `${video.views} Views` : "0 Views"}</span>
               <span>•</span>
               <span>
