@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { Input } from "@/components/ui/input";
 import { server } from "@/constants";
 import { useParams, Link } from "react-router-dom";
@@ -13,40 +12,60 @@ const CommentSection = () => {
   const [hasMore, setHasMore] = useState(true);
   const [newComment, setNewComment] = useState("");
   const uniqueCommentIds = useRef(new Set());
+  const observer = useRef();
+
+  const lastCommentElementRef = useCallback(
+    (node) => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [hasMore]
+  );
+
+  const fetchComments = useCallback(
+    async (pageToFetch) => {
+      try {
+        const response = await axios.get(
+          `${server}/comments/${videoId}?page=${pageToFetch}&limit=4`,
+          { withCredentials: true }
+        );
+        const res = response.data;
+        const newComments = res.data.comments.filter(
+          (comment) => !uniqueCommentIds.current.has(comment._id)
+        );
+
+        newComments.forEach((comment) =>
+          uniqueCommentIds.current.add(comment._id)
+        );
+
+        setComments((prevComments) => [...prevComments, ...newComments]);
+
+        if (newComments.length === 0) setHasMore(false);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    },
+    [videoId]
+  );
 
   useEffect(() => {
-    // Reset comments and page when videoId changes
     setComments([]);
     setPage(1);
     setHasMore(true);
     uniqueCommentIds.current.clear();
     fetchComments(1);
-  }, [videoId]);
+  }, [videoId, fetchComments]);
 
-  const fetchComments = async (pageToFetch) => {
-    try {
-      const response = await axios.get(
-        `${server}/comments/${videoId}?page=${pageToFetch}&limit=4`,
-        { withCredentials: true }
-      );
-      const res = response.data;
-      console.log(res.data);
-      // Filter out duplicate comments
-      const newComments = res.data.comments.filter(
-        (comment) => !uniqueCommentIds.current.has(comment._id)
-      );
-
-      newComments.forEach((comment) =>
-        uniqueCommentIds.current.add(comment._id)
-      );
-
-      setComments((prevComments) => [...prevComments, ...newComments]);
-
-      if (newComments.length === 0) setHasMore(false);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
+  useEffect(() => {
+    if (page > 1) {
+      fetchComments(page);
     }
-  };
+  }, [page, fetchComments]);
 
   const handleAddComment = async () => {
     if (newComment.trim().length > 0) {
@@ -75,9 +94,9 @@ const CommentSection = () => {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           onKeyPress={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (e.key === "Enter" && e.shiftKey) {
               e.preventDefault();
-              handleAddComment();
+              setNewComment((prev) => prev + "\n");
             }
           }}
         />
@@ -89,21 +108,12 @@ const CommentSection = () => {
           />
         )}
       </div>
-      <InfiniteScroll
-        dataLength={comments.length}
-        next={() => {
-          const nextPage = page + 1;
-          setPage(nextPage);
-          fetchComments(nextPage);
-        }}
-        hasMore={hasMore}
-        loader={<h4 className="text-white">Loading...</h4>}
-        endMessage={<p className="text-white">No more comments</p>}
-      >
-        <ul>
-          {comments &&
-            comments.map((comment) => (
+      <ul>
+        {comments.map((comment, index) => {
+          if (comments.length === index + 1) {
+            return (
               <li
+                ref={lastCommentElementRef}
                 key={comment._id}
                 className="mb-4 text-white border-t border-white py-2"
               >
@@ -115,10 +125,10 @@ const CommentSection = () => {
                       className="w-10 h-10 rounded-full mr-2 hover:border-2 border-purple-500"
                     />
                     <div>
-                      <p className="text-white font-bold  hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+                      <p className="text-white font-bold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
                         {comment.ownerDetails.fullname}
                       </p>
-                      <p className="text-gray-400 text-sm  hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+                      <p className="text-gray-400 text-sm hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
                         @{comment.ownerDetails.username}
                       </p>
                     </div>
@@ -126,11 +136,66 @@ const CommentSection = () => {
                 </Link>
                 <p className="text-white">{comment.content}</p>
               </li>
-            ))}
-        </ul>
-      </InfiniteScroll>
+            );
+          } else {
+            return (
+              <li
+                key={comment._id}
+                className="mb-4 text-white border-t border-white py-2"
+              > 
+              <div className="flex gap-2">
+                <Link to={`/${comment.ownerDetails.username}`}>
+                  <div className="flex items-center mb-2">
+                    <img
+                      src={comment.ownerDetails.avatar}
+                      alt={comment.ownerDetails.username}
+                      className="w-10 h-10 rounded-full mr-2 hover:border-2 border-purple-500"
+                    />
+                    <div>
+                      <p className="text-white font-bold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+                        {comment.ownerDetails.fullname}
+                      </p>
+                      <p className="text-gray-400 text-sm hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+                        @{comment.ownerDetails.username}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+                <span>•</span>
+                <div className="text-xs flex pt-[4px]">{getTimeDifference(comment.createdAt)}</div>
+                </div>
+                <p className="text-white">{comment.content}</p>
+              </li>
+            );
+          }
+        })}
+        {hasMore && (
+          <div className="text-white text-center mt-4">
+            Loading more comments...
+          </div>
+        )}
+      </ul>
     </div>
   );
+};
+
+const getTimeDifference = (date) => {
+  const now = new Date();
+  const videoDate = new Date(date);
+  const diffInSeconds = Math.floor((now - videoDate) / 1000);
+
+  const minutes = Math.floor(diffInSeconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(months / 12);
+
+  if (years > 0) return `${years} year${years > 1 ? "s" : ""} ago`;
+  if (months > 0) return `${months} month${months > 1 ? "s" : ""} ago`;
+  if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
+  if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  if (minutes > 0) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+  return `just now`;
 };
 
 export default CommentSection;

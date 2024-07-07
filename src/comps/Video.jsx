@@ -1,15 +1,23 @@
 import { server } from "@/constants";
 import axios from "axios";
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useContext,
+} from "react";
+import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import VideoUploadDialog from "./VideoUploadDialog";
 import { useSelector } from "react-redux";
+import { SidebarContext } from "@/App"; // Adjust the import path as necessary
 
 const Video = () => {
+  const isExpanded = useContext(SidebarContext);
   const username = useSelector((state) => state.userInfo.username);
   const { profile } = useParams();
-  const [cur,setCur] = useState(profile);
+  const [cur, setCur] = useState(profile);
   const [videos, setVideos] = useState([]);
   const [flag, setFlag] = useState(false);
   const [page, setPage] = useState(1);
@@ -26,49 +34,56 @@ const Video = () => {
       });
       if (node) observer.current.observe(node);
     },
-    [hasMore,profile]
+    [hasMore]
   );
 
-  useEffect(() => {
-    const getAllVideos = async () => {
+  const getAllVideos = useCallback(
+    async (reset = false) => {
       try {
-        if(cur !== profile){
-          handleUploadComplete();
-          setCur(profile)
+        if (reset || cur !== profile) {
+          setCur(profile);
+          setPage(1);
+          setVideos([]);
         }
         const response = await axios.get(
           `${server}/videos/allVideos/${
             profile.charAt(0) === ":" ? profile.substring(1) : profile
           }`,
           {
-            params: { page: page, limit: 4, sortType: "ascending" },
+            params: { page: reset ? 1 : page, limit: 4, sortType: "ascending" },
           }
         );
         const res = response.data;
-        console.log(res);
         setVideos((prevVideos) => {
           const newVideos = res.data.videos.filter(
             (video) =>
               !prevVideos.some((prevVideo) => prevVideo._id === video._id)
           );
-          return [...prevVideos, ...newVideos];
+          return reset ? newVideos : [...prevVideos, ...newVideos];
         });
         setHasMore(res.data.nextPage !== null);
       } catch (error) {
         console.error(error);
       }
-    };
+    },
+    [cur, profile, page]
+  );
 
+  useEffect(() => {
     setFlag(
       (profile.charAt(0) === ":" ? profile.substring(1) : profile) === username
     );
+    getAllVideos(true);
+  }, [profile]);
 
-    getAllVideos();
-  }, [profile, page]);
+  useEffect(() => {
+    if (page > 1) {
+      getAllVideos();
+    }
+  }, [page]);
 
   const handleUploadComplete = () => {
-    setPage(1); // Reset to first page
-    setVideos([]); // Clear current videos
+    getAllVideos(true); // Reset and fetch from the first page
   };
 
   const getTimeDifference = (date) => {
@@ -91,71 +106,43 @@ const Video = () => {
   };
 
   return (
-    <div className="w-full px-4 bg-black text-white min-h-[50vh] ">
-      {flag ? (
+    <div className={`w-full px-4 bg-black text-white min-h-[50vh]`}>
+      {flag && (
         <div className="flex w-full py-4">
           <VideoUploadDialog onUploadComplete={handleUploadComplete} />
         </div>
-      ) : null}
+      )}
 
       <div
         className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ${
           !flag ? "py-4" : ""
         }`}
       >
-        {videos.length > 0 &&
-          videos.map((video, index) => {
-            if (videos.length === index + 1) {
-              return (
-                <div ref={lastVideoElementRef} key={video._id}>
-                  <Card className="bg-black text-white border-none">
-                    <CardHeader className="p-0">
-                      <img
-                        src={video.thumbnail.url}
-                        alt={video.title}
-                        className="w-[95%] h-40 object-cover"
-                      />
-                    </CardHeader>
-                    <CardContent className="text-left p-0">
-                      <h3 className="text-lg font-bold my-2">{video.title}</h3>
-                      <p className="text-sm">
-                        {video.views} Views •{" "}
-                        {getTimeDifference(video.createdAt)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              );
-            } else {
-              return (
-                <Card
-                  key={video._id}
-                  className="bg-black text-white border-none"
-                >
-                  <CardHeader className="p-0">
-                    <img
-                      src={video.thumbnail.url}
-                      alt={video.title}
-                      className="w-[95%] h-40 object-cover"
-                    />
-                  </CardHeader>
-                  <CardContent className="text-left p-0">
-                    <h3 className="text-lg font-bold my-2">{video.title}</h3>
-                    <p className="text-sm">
-                      {video.views} Views • {getTimeDifference(video.createdAt)}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            }
-          })}
-      </div>
-
-      {hasMore && (
-        <div className="text-white text-center mt-4">
-          Loading more videos...
+        {videos.map((video, index) => (
+          <Link to={`/video/${video._id}`} key={video._id}>
+            <Card className="bg-black text-white border-none">
+              <CardHeader className="p-0">
+                <img
+                  src={video.thumbnail.url}
+                  alt={video.title}
+                  className={`w-[95%] object-cover ${
+                    !isExpanded ? "h-60" : "h-40"
+                  }`}
+                />
+              </CardHeader>
+              <CardContent className="text-left p-0">
+                <h3 className="text-lg font-bold my-2">{video.title}</h3>
+                <p className="text-sm">
+                  {video.views} Views • {getTimeDifference(video.createdAt)}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+        <div ref={lastVideoElementRef} className="text-white text-center mt-4">
+          {hasMore && "Loading more videos..."}
         </div>
-      )}
+      </div>
     </div>
   );
 };
