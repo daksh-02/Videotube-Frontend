@@ -1,4 +1,3 @@
-// VideoCard.js
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
@@ -24,34 +23,36 @@ const VideoCard = ({ video }) => {
   };
 
   return (
-    <Link to={`/video/${video._id}`}>
-      <div className="flex mb-4 bg-black overflow-hidden gap-4">
+    <div className="flex mb-4 bg-black overflow-hidden gap-4">
+      <Link to={`/video/${video._id}`} className="w-1/4">
         <img
           src={video.thumbnail.url}
           alt={video.title}
-          className="w-1/4 h-[210px] object-cover"
+          className="h-[210px] object-cover w-full"
         />
-        <div className="w-3/4">
+      </Link>
+      <div className="w-3/4">
+        <Link to={`/video/${video._id}`} className="block">
           <h2 className="text-white font-bold mb-2 text-2xl">{video.title}</h2>
-          <p className="text-white text-sm mb-2">
-            {`${video.views}  `} Views •{" "}
-            <span className="ml-2">{getTimeDifference(video.createdAt)}</span>
-          </p>
-          <Link to={`/${video.ownerDetails.username}`}>
-            <div className="flex items-center mb-3 gap-2">
-              <Avatar className="h-10 w-10 hover:border-2 border-purple-500">
-                <AvatarImage src={video.ownerDetails.avatar} />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <p className="text-white text-base font-semibold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
-                {video.ownerDetails.username}
-              </p>
-            </div>
-          </Link>
-          <p className="text-white mb-2">{video.description}</p>
-        </div>
+        </Link>
+        <p className="text-white text-sm mb-2">
+          {`${video.views}  `} Views •{" "}
+          <span className="ml-2">{getTimeDifference(video.createdAt)}</span>
+        </p>
+        <Link to={`/${video.ownerDetails.username}`} className="block">
+          <div className="flex items-center mb-3 gap-2">
+            <Avatar className="h-10 w-10 hover:border-2 border-purple-500">
+              <AvatarImage src={video.ownerDetails.avatar} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <p className="text-white text-base font-semibold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+              {video.ownerDetails.username}
+            </p>
+          </div>
+        </Link>
+        <p className="text-white mb-2">{video.description}</p>
       </div>
-    </Link>
+    </div>
   );
 };
 

@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
-import { Input } from "@/components/ui/input";
 import { server } from "@/constants";
 import { useParams, Link } from "react-router-dom";
-import { RxTriangleRight } from "react-icons/rx";
+import ConnentEditor from "../editor/CommentEditor.jsx";
+import CommentDelete from "@/alerts/CommentDelete.jsx";
+import { useSelector } from "react-redux";
 
 const CommentSection = () => {
+  const username = useSelector((state) => state.userInfo.username);
   const { videoId } = useParams();
   const [comments, setComments] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [newComment, setNewComment] = useState("");
   const uniqueCommentIds = useRef(new Set());
   const observer = useRef();
+  const [totalComments, setTotalComments] = useState(0);
 
   const lastCommentElementRef = useCallback(
     (node) => {
@@ -35,6 +37,7 @@ const CommentSection = () => {
           { withCredentials: true }
         );
         const res = response.data;
+        setTotalComments(res.data.totalDocs);
         const newComments = res.data.comments.filter(
           (comment) => !uniqueCommentIds.current.has(comment._id)
         );
@@ -67,107 +70,55 @@ const CommentSection = () => {
     }
   }, [page, fetchComments]);
 
-  const handleAddComment = async () => {
-    if (newComment.trim().length > 0) {
-      try {
-        const response = await axios.post(
-          `${server}/comments/${videoId}`,
-          { content: newComment },
-          { withCredentials: true }
-        );
-        setNewComment("");
-        setComments((prevComments) => [response.data.data, ...prevComments]);
-        uniqueCommentIds.current.add(response.data.data._id);
-      } catch (error) {
-        console.error("Error adding comment:", error);
-      }
-    }
-  };
-
   return (
-    <div className="bg-black p-4 rounded-lg border-white border-2">
-      <h3 className="text-white mb-4">{comments.length} Comments</h3>
-      <div className="relative mb-6">
-        <Input
-          className="bg-gray-800 text-white pr-10"
-          placeholder="Add a Comment"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter" && e.shiftKey) {
-              e.preventDefault();
-              setNewComment((prev) => prev + "\n");
-            }
-          }}
-        />
-        {newComment.trim().length > 0 && (
-          <RxTriangleRight
-            onClick={handleAddComment}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-white hover:text-purple-500"
-            size={30}
-          />
-        )}
-      </div>
+    <div className="bg-black p-4 rounded-lg border-white border-2 relative">
+      <h3 className="text-white mb-4">{totalComments} Comments</h3>
+      <ConnentEditor
+        videoId={videoId}
+        setComments={setComments}
+        uniqueCommentIds={uniqueCommentIds}
+      />
       <ul>
         {comments.map((comment, index) => {
-          if (comments.length === index + 1) {
-            return (
-              <li
-                ref={lastCommentElementRef}
-                key={comment._id}
-                className="mb-4 text-white border-t border-white py-2"
-              >
-                <Link to={`/${comment.ownerDetails.username}`}>
-                  <div className="flex items-center mb-2">
-                    <img
-                      src={comment.ownerDetails.avatar}
-                      alt={comment.ownerDetails.username}
-                      className="w-10 h-10 rounded-full mr-2 hover:border-2 border-purple-500"
-                    />
-                    <div>
-                      <p className="text-white font-bold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
-                        {comment.ownerDetails.fullname}
-                      </p>
-                      <p className="text-gray-400 text-sm hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
-                        @{comment.ownerDetails.username}
-                      </p>
+          return (
+            <li
+              ref={comments.length === index + 1 ? lastCommentElementRef : null}
+              key={comment._id}
+              className="mb-4 text-white border-t border-white py-2 relative"
+            >
+              <Link to={`/${comment.ownerDetails.username}`}>
+                <div className="flex">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center">
+                      <img
+                        src={comment.ownerDetails.avatar}
+                        alt={comment.ownerDetails.username}
+                        className="w-10 h-10 rounded-full mr-2 hover:border-2 border-purple-500"
+                      />
+                      <div>
+                        <p className="text-white font-bold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+                          {comment.ownerDetails.fullname}
+                        </p>
+                        <p className="text-gray-400 text-sm hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
+                          @{comment.ownerDetails.username}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="ml-2 pt-[4px] text-xs text-gray-400">
+                      {getTimeDifference(comment.createdAt)}
                     </div>
                   </div>
-                </Link>
-                <p className="text-white">{comment.content}</p>
-              </li>
-            );
-          } else {
-            return (
-              <li
-                key={comment._id}
-                className="mb-4 text-white border-t border-white py-2"
-              > 
-              <div className="flex gap-2">
-                <Link to={`/${comment.ownerDetails.username}`}>
-                  <div className="flex items-center mb-2">
-                    <img
-                      src={comment.ownerDetails.avatar}
-                      alt={comment.ownerDetails.username}
-                      className="w-10 h-10 rounded-full mr-2 hover:border-2 border-purple-500"
-                    />
-                    <div>
-                      <p className="text-white font-bold hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
-                        {comment.ownerDetails.fullname}
-                      </p>
-                      <p className="text-gray-400 text-sm hover:text-purple-500 hover:underline hover:underline-offset-4 hover:decoration-purple-500">
-                        @{comment.ownerDetails.username}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-                <span>•</span>
-                <div className="text-xs flex pt-[4px]">{getTimeDifference(comment.createdAt)}</div>
                 </div>
-                <p className="text-white">{comment.content}</p>
-              </li>
-            );
-          }
+              </Link>
+              <p className="text-white">{comment.content}</p>
+
+              {username === comment.ownerDetails.username ? (
+                <div className="absolute top-4 right-4">
+                  <CommentDelete _id={comment._id} />
+                </div>
+              ) : null}
+            </li>
+          );
         })}
         {hasMore && (
           <div className="text-white text-center mt-4">
