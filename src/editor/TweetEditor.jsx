@@ -34,7 +34,7 @@ const TweetEditor = () => {
       const cleanContent = DOMPurify.sanitize(content, { ALLOWED_TAGS: [] });
       const response = await axios.post(
         `${server}/tweets/`,
-        { content },
+        { content: cleanContent },
         { withCredentials: true }
       );
       const res = response.data;
