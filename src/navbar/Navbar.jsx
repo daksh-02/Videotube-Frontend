@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import Login from "@/comps/Login";
 import Signup from "@/comps/Signup";
 import defaultuser from "../assets/defuser.jpg";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import Logout from "@/alerts/Logout";
 import { Button } from "@/components/ui/button";
 import { CiSearch } from "react-icons/ci";
+import { RxCross1 } from "react-icons/rx";
+import { Input } from "@/components/ui/input";
 
 const Navbar = () => {
   const { isLoggedIn, avatar, username } = useSelector(
@@ -32,26 +33,38 @@ const Navbar = () => {
     } else navigate(`/find/${searchTerm}`);
   };
 
+  const clearAll = () => {
+    setSearchTerm("");
+  };
+
   return (
     <nav className="bg-black text-white flex items-center justify-between p-4 border-b border-white">
       <div className="flex items-center space-x-4">
         <img src="/path/to/logo.png" alt="Logo" className="h-10" />
       </div>
       <div className="flex-grow flex justify-center items-center">
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full max-w-md flex">
           <Input
-            className="bg-gray-800 text-white w-full"
+            type="text"
+            className="bg-gray-800 text-white w-full pl-4 pr-10 rounded-l-full border-2"
             placeholder="Explore"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={handleKeyPress}
+            style={{ outline: "none", boxShadow: "none" }} // Remove focus outline and box shadow
           />
           <button
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white font-bold"
+            className="absolute right-14 top-1/2 transform -translate-y-1/2 text-white"
+            onClick={clearAll}
+          >
+            <RxCross1 size={15} className="mr-2" />
+          </button>
+          <Button
             onClick={handleSubmit}
+            className="bg-gray-800 text-white px-4 rounded-r-full border-y-2 border-r-2 border-white hover:bg-white hover:text-black"
           >
             <CiSearch size={20} />
-          </button>
+          </Button>
         </div>
       </div>
       {!isLoggedIn ? (
