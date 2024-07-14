@@ -31,10 +31,12 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
           <GrLike size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Liked Videos</span>}
         </div>
-        <div className="sidebar-button flex items-center border border-white p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full">
-          <GrHistory size={24} className={isExpanded ? "mr-2" : ""} />
-          {isExpanded && <span className="font-bold">History</span>}
-        </div>
+        <Link to="/watchHistory">
+          <div className="sidebar-button flex items-center border border-white p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full">
+            <GrHistory size={24} className={isExpanded ? "mr-2" : ""} />
+            {isExpanded && <span className="font-bold">History</span>}
+          </div>
+        </Link>
         <div className="sidebar-button flex items-center border border-white p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full">
           <BsCameraVideo size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Your Videos</span>}

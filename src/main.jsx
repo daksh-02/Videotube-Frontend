@@ -20,8 +20,7 @@ import {
   Tweet,
   Playlist,
 } from "./comps/Compiled";
-import Videopage from "./pages/Videopage.jsx";
-import SearchPage from "./pages/SearchPage.jsx";
+import { SearchPage, Videopage, WatchHistoryPage } from "./pages/Compiled.js";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +34,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="video/:videoId" element={<Videopage />} />
       <Route path="find/:user" element={<SearchPage />} />
+      <Route path="watchHistory" element={<WatchHistoryPage />} />
     </Route>
   )
 );
