@@ -18,7 +18,6 @@ const Videopage = () => {
     updatedHistory = [videoId, ...updatedHistory];
 
     dispatch(setWatchHistory(updatedHistory));
-    console.log(updatedHistory);
   }, [videoId]);
 
   return (
