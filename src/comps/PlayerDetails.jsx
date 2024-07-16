@@ -151,7 +151,16 @@ const PlayerDetail = ({ video }) => {
                 )}
               </button>
             </div>
-            <PlaylistDialog videoId={videoId} />
+            <PlaylistDialog
+              videoId={videoId}
+              presentCheckBox={true}
+              customTrigger={
+                <Button variant="secondary" className="ml-4">
+                  <AiOutlineSave className="mr-2" size={18} />
+                  <span className="font-bold">Save</span>
+                </Button>
+              }
+            />
           </div>
         </div>
         {video && (

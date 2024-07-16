@@ -1,13 +1,15 @@
 import React from "react";
 import { GrHomeRounded, GrLike, GrHistory, GrMenu } from "react-icons/gr";
 import { BsCameraVideo } from "react-icons/bs";
-import { FaRegFolderClosed } from "react-icons/fa6";
+import { CgProfile } from "react-icons/cg";
 import { SlUserFollowing } from "react-icons/sl";
 import { BiSupport } from "react-icons/bi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ isExpanded, toggleSidebar }) => {
+  const { isLoggedIn, username } = useSelector((state) => state.userInfo);
   return (
     <div
       className={`bg-black text-white h-full flex flex-col justify-between border-r border-white p-4 ${
@@ -21,6 +23,18 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
         >
           <GrMenu size={24} />
         </button>
+        {isLoggedIn ? (
+          <Link to={`/${username}`}>
+            <div
+              className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
+                isExpanded ? "border-b border-white" : ""
+              }`}
+            >
+              <CgProfile size={24} className={isExpanded ? "mr-2" : ""} />
+              {isExpanded && <span className="font-bold">Your Profile</span>}
+            </div>
+          </Link>
+        ) : null}
         <Link to="/">
           <div
             className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
@@ -56,14 +70,6 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
         >
           <BsCameraVideo size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Your Videos</span>}
-        </div>
-        <div
-          className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
-            isExpanded ? "border-b border-white" : ""
-          }`}
-        >
-          <FaRegFolderClosed size={24} className={isExpanded ? "mr-2" : ""} />
-          {isExpanded && <span className="font-bold">Collection</span>}
         </div>
         <div
           className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
