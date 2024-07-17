@@ -4,8 +4,9 @@ import axios from "axios";
 import { server } from "../constants.js";
 import { RiPlayListAddFill } from "react-icons/ri";
 import PlaylistDelete from "@/alerts/PlaylistDelete";
+import { Link } from "react-router-dom";
 
-const PlaylistCard = ({ playlist, onChange }) => {
+const PlaylistCard = ({ playlist, onChange, del }) => {
   const [coverImage, setCoverImage] = useState();
 
   useEffect(() => {
@@ -25,24 +26,29 @@ const PlaylistCard = ({ playlist, onChange }) => {
   }, [playlist.videos]);
 
   return (
-    <div className="relative w-full h-60 overflow-hidden bg-gray-600">
-      <img src={coverImage || defPlaylist} alt="playlist cover" />
-      <div className="absolute top-2 right-2 z-10">
-        <PlaylistDelete _id={playlist._id} onChange={onChange} />
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/40 to-transparent p-4">
-        <div className="text-white">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-bold">{playlist.name}</h2>
-            <RiPlayListAddFill size={20} />
+    <Link to={`/playlist/${playlist._id}`}>
+      <div className="relative w-full h-60 overflow-hidden bg-gray-600">
+        <img src={coverImage || defPlaylist} alt="playlist cover" />
+        {del ? (
+          <div className="absolute top-2 right-2 z-10">
+            <PlaylistDelete _id={playlist._id} onChange={onChange} />
           </div>
-          <div className="flex justify-between items-center text-sm">
-            <span>{getTimeDifference(playlist.createdAt)}</span>
-            <span>{playlist.videos.length} videos</span>
+        ) : null}
+
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/40 to-transparent p-4">
+          <div className="text-white">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-bold">{playlist.name}</h2>
+              <RiPlayListAddFill size={20} />
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <span>{getTimeDifference(playlist.createdAt)}</span>
+              <span>{playlist.videos.length} videos</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

@@ -54,7 +54,12 @@ const Playlist = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
           {playlists.map((playlist) => (
-            <PlaylistCard key={playlist._id} playlist={playlist} onChange={onChange}/>
+            <PlaylistCard
+              key={playlist._id}
+              playlist={playlist}
+              onChange={onChange}
+              del={true}
+            />
           ))}
         </div>
       )}
