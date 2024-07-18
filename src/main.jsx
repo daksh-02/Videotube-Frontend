@@ -25,6 +25,7 @@ import {
   Videopage,
   WatchHistoryPage,
   PlaylistPage,
+  LikedVidoesPage,
 } from "./pages/Compiled.js";
 
 const router = createBrowserRouter(
@@ -41,6 +42,7 @@ const router = createBrowserRouter(
       <Route path="find/:user" element={<SearchPage />} />
       <Route path="watchHistory" element={<WatchHistoryPage />} />
       <Route path="playlist/:playlistId" element={<PlaylistPage />} />
+      <Route path="likedVideos" element = {<LikedVidoesPage/>} />
     </Route>
   )
 );

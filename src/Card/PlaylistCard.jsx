@@ -26,15 +26,9 @@ const PlaylistCard = ({ playlist, onChange, del }) => {
   }, [playlist.videos]);
 
   return (
-    <Link to={`/playlist/${playlist._id}`}>
-      <div className="relative w-full h-60 overflow-hidden bg-gray-600">
+    <div className="relative w-full h-60 overflow-hidden bg-gray-600">
+      <Link to={`/playlist/${playlist._id}`} className="block h-full">
         <img src={coverImage || defPlaylist} alt="playlist cover" />
-        {del ? (
-          <div className="absolute top-2 right-2 z-10">
-            <PlaylistDelete _id={playlist._id} onChange={onChange} />
-          </div>
-        ) : null}
-
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/40 to-transparent p-4">
           <div className="text-white">
             <div className="flex justify-between items-center">
@@ -47,8 +41,13 @@ const PlaylistCard = ({ playlist, onChange, del }) => {
             </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      {del && (
+        <div className="absolute top-2 right-2 z-10">
+          <PlaylistDelete _id={playlist._id} onChange={onChange} />
+        </div>
+      )}
+    </div>
   );
 };
 

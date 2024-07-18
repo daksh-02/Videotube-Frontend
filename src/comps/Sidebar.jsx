@@ -45,6 +45,7 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
             {isExpanded && <span className="font-bold">Home</span>}
           </div>
         </Link>
+        <Link to="/likedVideos">
         <div
           className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
             isExpanded ? "border-b border-white" : ""
@@ -53,6 +54,7 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
           <GrLike size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Liked Videos</span>}
         </div>
+        </Link>
         <Link to="/watchHistory">
           <div
             className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
