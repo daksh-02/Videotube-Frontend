@@ -73,14 +73,6 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
           <BsCameraVideo size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Your Videos</span>}
         </div>
-        <div
-          className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
-            isExpanded ? "border-b border-white" : ""
-          }`}
-        >
-          <SlUserFollowing size={24} className={isExpanded ? "mr-2" : ""} />
-          {isExpanded && <span className="font-bold">Subscribers</span>}
-        </div>
       </div>
       <div className="flex flex-col space-y-2">
         <div

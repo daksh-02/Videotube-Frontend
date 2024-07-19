@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import coverImg from "../assets/coverimage.jpg";
 import axios from "axios";
 import { server } from "@/constants";
-import { Outlet, useParams, Link } from "react-router-dom";
+import { Outlet, useParams, Link, useLocation } from "react-router-dom";
 import defaultuser from "../assets/defuser.jpg";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import { LiaUserEditSolid } from "react-icons/lia";
 const Profile = () => {
   const curUsername = useSelector((state) => state.userInfo.username);
   const { profile } = useParams();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("Videos");
   const [subCount, setSubCount] = useState(0);
   const [subChannelCount, setSubChannelCount] = useState(0);
@@ -52,8 +53,15 @@ const Profile = () => {
     };
     dashboard();
     if (profile !== curUsername) checkSubscription();
-    setActiveTab("Videos")
-  }, [profile]);
+
+    // Set active tab based on the current path
+    const path = location.pathname.split("/").pop();
+    if (path === profile) {
+      setActiveTab("Videos");
+    } else {
+      setActiveTab(path.charAt(0).toUpperCase() + path.slice(1));
+    }
+  }, [profile, location.pathname]);
 
   const toggleSubscription = async () => {
     try {
@@ -101,7 +109,7 @@ const Profile = () => {
         <div className="mr-8 font-semibold">
           {profile === curUsername ? (
             <Button className="text-white bg-purple-500 hover:bg-purple-700">
-              {<LiaUserEditSolid className="mr-2" size={20}/>} Edit
+              {<LiaUserEditSolid className="mr-2" size={20} />} Edit
             </Button>
           ) : !isSubscribed ? (
             <Button
