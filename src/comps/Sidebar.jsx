@@ -65,14 +65,16 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
             {isExpanded && <span className="font-bold">History</span>}
           </div>
         </Link>
+        <Link to= "/myVidoes">
         <div
           className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
             isExpanded ? "border-b border-white" : ""
           }`}
         >
           <BsCameraVideo size={24} className={isExpanded ? "mr-2" : ""} />
-          {isExpanded && <span className="font-bold">Your Videos</span>}
+          {isExpanded && <span className="font-bold">My Videos</span>}
         </div>
+        </Link>
       </div>
       <div className="flex flex-col space-y-2">
         <div

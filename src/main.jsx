@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import store from "./store/Store.js";
 import {
   Route,
-  Router,
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,6 +25,7 @@ import {
   WatchHistoryPage,
   PlaylistPage,
   LikedVidoesPage,
+  StatsPage,
 } from "./pages/Compiled.js";
 
 const router = createBrowserRouter(
@@ -43,6 +43,7 @@ const router = createBrowserRouter(
       <Route path="watchHistory" element={<WatchHistoryPage />} />
       <Route path="playlist/:playlistId" element={<PlaylistPage />} />
       <Route path="likedVideos" element = {<LikedVidoesPage/>} />
+      <Route path="myVidoes" element = {<StatsPage/>} />
     </Route>
   )
 );

@@ -54,8 +54,9 @@ const Profile = () => {
     dashboard();
     if (profile !== curUsername) checkSubscription();
 
-    // Set active tab based on the current path
-    const path = location.pathname.split("/").pop();
+    let path = location.pathname.split("/").pop();
+    path = path.replace("%20"," ");
+    
     if (path === profile) {
       setActiveTab("Videos");
     } else {
