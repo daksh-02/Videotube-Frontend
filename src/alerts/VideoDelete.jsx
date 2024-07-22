@@ -29,7 +29,7 @@ const VideoDelete = ({ _id, handleChange }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <MdDelete size={17} />
+        <MdDelete size={20} color="red" />
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-black">
         <AlertDialogHeader>

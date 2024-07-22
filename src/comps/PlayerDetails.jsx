@@ -21,15 +21,19 @@ import { server } from "@/constants";
 import { useSelector } from "react-redux";
 import { LiaUserEditSolid } from "react-icons/lia";
 import PlaylistDialog from "./PlaylistDialog";
-import { Play } from "lucide-react";
+import EditVideoDialog from "./EditVideoDialog";
 
-const PlayerDetail = ({ video }) => {
+const PlayerDetail = ({ video, onChange }) => {
   const curUsername = useSelector((state) => state.userInfo.username);
   const { videoId } = useParams();
   const [like, setLike] = useState(null);
   const [disLike, setDisLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [videoTitle, setVideoTitle] = useState(video ? video.title : "");
+  const [videoDescription, setVideoDescription] = useState(
+    video ? video.description : ""
+  );
 
   const toggleLike = async () => {
     try {
@@ -111,13 +115,19 @@ const PlayerDetail = ({ video }) => {
       checkSubscription();
   }, [video]);
 
+  const onUploadComplete = ({ video }) => {
+    setVideoTitle(video.title);
+    setVideoDescription(video.description);
+    onChange({ thumbnail: video.thumbnail.url });
+  };
+
   return (
     <div className="my-6 border-2 border-white rounded-lg">
       <div className="p-4 px-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-white text-2xl font-bold mt-2 overflow-hidden text-ellipsis max-w-full">
-              {video ? video.title : "Default Video Title"}
+              {videoTitle ? videoTitle : "Default Video Title"}
             </h1>
             <div className="text-white flex items-center space-x-2 mt-2">
               <span>{video ? `${video.views} Views` : "0 Views"}</span>
@@ -177,9 +187,15 @@ const PlayerDetail = ({ video }) => {
               </div>
             </Link>
             {video && video.ownerDetails.username === curUsername ? (
-              <Button className="text-white bg-purple-500 hover:bg-purple-700 mr-4 mb-2">
-                {<LiaUserEditSolid className="mr-2" size={20} />} Edit
-              </Button>
+              <EditVideoDialog
+                _id={video._id}
+                triggerComponent={
+                  <Button className="text-white bg-purple-500 hover:bg-purple-700 mr-4 mb-2">
+                    {<LiaUserEditSolid className="mr-2" size={20} />} Edit
+                  </Button>
+                }
+                onUploadComplete={onUploadComplete}
+              />
             ) : !isSubscribed ? (
               <Button
                 className="text-white bg-purple-500 hover:bg-purple-700 mr-4 mb-2"
@@ -205,7 +221,7 @@ const PlayerDetail = ({ video }) => {
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-lg">Description</AccordionTrigger>
             <AccordionContent>
-              {video ? video.description : ""}
+              {videoDescription ? videoDescription : ""}
             </AccordionContent>
           </AccordionItem>
         </Accordion>

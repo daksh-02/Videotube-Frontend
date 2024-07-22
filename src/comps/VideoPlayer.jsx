@@ -12,14 +12,14 @@ const VideoPlayer = () => {
   const defaultVideoUrl = "default_video_url.mp4";
   const [video, setVideo] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-
+  const [thumbnail, setThubnail] = useState();
   useEffect(() => {
     const fetchVideoData = async () => {
       try {
         const response = await axios.get(`${server}/videos/${videoId}`);
         const res = response.data;
         setVideo(res.data);
-        console.log(res.data);
+        setThubnail(res.data.thumbnail.url);
       } catch (error) {
         console.error("Error fetching video data:", error);
       }
@@ -32,6 +32,9 @@ const VideoPlayer = () => {
     setIsPlaying(true);
   };
 
+  const onChange = ({ thumbnail }) => {
+    setThubnail(thumbnail);
+  };
   return (
     <div className="bg-black shadow-lg">
       <AspectRatio ratio={16 / 9}>
@@ -41,7 +44,7 @@ const VideoPlayer = () => {
             onClick={handleThumbnailClick}
           >
             <img
-              src={video ? video.thumbnail.url : "default_thumbnail.png"}
+              src={thumbnail ? thumbnail : "default_thumbnail.png"}
               alt="Thumbnail"
               className="w-full h-full object-cover"
             />
@@ -62,7 +65,7 @@ const VideoPlayer = () => {
           />
         )}
       </AspectRatio>
-      <PlayerDetail video={video} />
+      {video && <PlayerDetail video={video} onChange={onChange} />}
     </div>
   );
 };
