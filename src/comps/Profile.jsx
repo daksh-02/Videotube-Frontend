@@ -3,7 +3,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import coverImg from "../assets/coverimage.jpg";
 import axios from "axios";
 import { server } from "@/constants";
-import { Outlet, useParams, Link, useLocation } from "react-router-dom";
+import {
+  Outlet,
+  useParams,
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import defaultuser from "../assets/defuser.jpg";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
@@ -11,6 +17,7 @@ import { SlUserFollowing } from "react-icons/sl";
 import { LiaUserEditSolid } from "react-icons/lia";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const curUsername = useSelector((state) => state.userInfo.username);
   const { profile } = useParams();
   const location = useLocation();
@@ -55,8 +62,8 @@ const Profile = () => {
     if (profile !== curUsername) checkSubscription();
 
     let path = location.pathname.split("/").pop();
-    path = path.replace("%20"," ");
-    
+    path = path.replace("%20", " ");
+
     if (path === profile) {
       setActiveTab("Videos");
     } else {
@@ -76,6 +83,9 @@ const Profile = () => {
     } catch (error) {}
   };
 
+  const toSettings = () => {
+    navigate("/settings");
+  };
   return (
     <div className="w-full h-full">
       {/* Cover Image */}
@@ -109,7 +119,10 @@ const Profile = () => {
 
         <div className="mr-8 font-semibold">
           {profile === curUsername ? (
-            <Button className="text-white bg-purple-500 hover:bg-purple-700">
+            <Button
+              className="text-white bg-purple-500 hover:bg-purple-700"
+              onClick={toSettings}
+            >
               {<LiaUserEditSolid className="mr-2" size={20} />} Edit
             </Button>
           ) : !isSubscribed ? (

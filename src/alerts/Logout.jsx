@@ -15,8 +15,10 @@ import axios from "axios";
 import { server } from "@/constants";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
@@ -28,6 +30,7 @@ const Logout = () => {
       if (response.status === 200) {
         dispatch(logout());
       }
+      navigate("/");
     } catch (error) {
       console.error("Error logging out:", error);
     }
