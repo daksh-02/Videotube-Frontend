@@ -5,6 +5,7 @@ import WatchHistoryPage from "./WatchHistoryPage";
 import PlaylistPage from "./PlaylistPage";
 import LikedVidoesPage from "./LikedVidoesPage";
 import StatsPage from "./StatsPage";
+import SettingsPage from "./SettingsPage";
 
 export {
   HomePage,
@@ -14,4 +15,5 @@ export {
   PlaylistPage,
   LikedVidoesPage,
   StatsPage,
+  SettingsPage
 };

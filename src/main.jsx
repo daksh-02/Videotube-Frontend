@@ -18,6 +18,8 @@ import {
   Following,
   Tweet,
   Playlist,
+  Password,
+  MyDetails,
 } from "./comps/Compiled";
 import {
   SearchPage,
@@ -26,6 +28,7 @@ import {
   PlaylistPage,
   LikedVidoesPage,
   StatsPage,
+  SettingsPage,
 } from "./pages/Compiled.js";
 
 const router = createBrowserRouter(
@@ -42,8 +45,12 @@ const router = createBrowserRouter(
       <Route path="find/:user" element={<SearchPage />} />
       <Route path="watchHistory" element={<WatchHistoryPage />} />
       <Route path="playlist/:playlistId" element={<PlaylistPage />} />
-      <Route path="likedVideos" element = {<LikedVidoesPage/>} />
-      <Route path="myVidoes" element = {<StatsPage/>} />
+      <Route path="likedVideos" element={<LikedVidoesPage />} />
+      <Route path="myVidoes" element={<StatsPage />} />
+      <Route path="settings" element={<SettingsPage />}>
+        <Route index element={<MyDetails />} />
+        <Route path="password" element={<Password />}></Route>
+      </Route>
     </Route>
   )
 );

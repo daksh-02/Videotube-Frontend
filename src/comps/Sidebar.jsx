@@ -1,12 +1,11 @@
 import React from "react";
 import { GrHomeRounded, GrLike, GrHistory, GrMenu } from "react-icons/gr";
-import { BsCameraVideo } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { SlUserFollowing } from "react-icons/sl";
 import { BiSupport } from "react-icons/bi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { RxDashboard } from "react-icons/rx";
 
 const Sidebar = ({ isExpanded, toggleSidebar }) => {
   const { isLoggedIn, username } = useSelector((state) => state.userInfo);
@@ -46,14 +45,14 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
           </div>
         </Link>
         <Link to="/likedVideos">
-        <div
-          className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
-            isExpanded ? "border-b border-white" : ""
-          }`}
-        >
-          <GrLike size={24} className={isExpanded ? "mr-2" : ""} />
-          {isExpanded && <span className="font-bold">Liked Videos</span>}
-        </div>
+          <div
+            className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
+              isExpanded ? "border-b border-white" : ""
+            }`}
+          >
+            <GrLike size={24} className={isExpanded ? "mr-2" : ""} />
+            {isExpanded && <span className="font-bold">Liked Videos</span>}
+          </div>
         </Link>
         <Link to="/watchHistory">
           <div
@@ -65,15 +64,15 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
             {isExpanded && <span className="font-bold">History</span>}
           </div>
         </Link>
-        <Link to= "/myVidoes">
-        <div
-          className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
-            isExpanded ? "border-b border-white" : ""
-          }`}
-        >
-          <BsCameraVideo size={24} className={isExpanded ? "mr-2" : ""} />
-          {isExpanded && <span className="font-bold">My Videos</span>}
-        </div>
+        <Link to="/myVidoes">
+          <div
+            className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
+              isExpanded ? "border-b border-white" : ""
+            }`}
+          >
+            <RxDashboard size={24} className={isExpanded ? "mr-2" : ""} />
+            {isExpanded && <span className="font-bold">Dashboard</span>}
+          </div>
         </Link>
       </div>
       <div className="flex flex-col space-y-2">
@@ -85,6 +84,7 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
           <BiSupport size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Support</span>}
         </div>
+        <Link to="/settings">
         <div
           className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
             isExpanded ? "border-b border-white" : ""
@@ -93,6 +93,7 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
           <IoSettingsOutline size={24} className={isExpanded ? "mr-2" : ""} />
           {isExpanded && <span className="font-bold">Settings</span>}
         </div>
+        </Link>
       </div>
     </div>
   );
