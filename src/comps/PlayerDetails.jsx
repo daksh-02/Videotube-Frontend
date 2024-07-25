@@ -35,6 +35,14 @@ const PlayerDetail = ({ video, onChange }) => {
     video ? video.description : ""
   );
 
+  useEffect(() => {
+    // Update the title and description if the video prop changes
+    if (video) {
+      setVideoTitle(video.title);
+      setVideoDescription(video.description);
+    }
+  }, [video]);
+
   const toggleLike = async () => {
     try {
       const response = await axios.post(

@@ -31,7 +31,11 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
                 }`}
               >
                 <CgProfile size={24} className={isExpanded ? "mr-2" : ""} />
-                {isExpanded && <span className="font-bold">{username?username:"Your Profile"}</span>}
+                {isExpanded && (
+                  <span className="font-bold">
+                    {username ? username : "Your Profile"}
+                  </span>
+                )}
               </div>
             </Link>
           ) : null}
@@ -75,14 +79,16 @@ const Sidebar = ({ isExpanded, toggleSidebar }) => {
               {isExpanded && <span className="font-bold">Dashboard</span>}
             </div>
           </Link>
-          <div
-            className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
-              isExpanded ? "border-b border-white" : ""
-            }`}
-          >
-            <BiSupport size={24} className={isExpanded ? "mr-2" : ""} />
-            {isExpanded && <span className="font-bold">Support</span>}
-          </div>
+          <Link to="/support">
+            <div
+              className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${
+                isExpanded ? "border-b border-white" : ""
+              }`}
+            >
+              <BiSupport size={24} className={isExpanded ? "mr-2" : ""} />
+              {isExpanded && <span className="font-bold">Support</span>}
+            </div>
+          </Link>
           <Link to="/settings">
             <div
               className={`sidebar-button flex items-center p-2 cursor-pointer hover:bg-gray-200 hover:text-black transition ease-in-out duration-300 w-full ${

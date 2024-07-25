@@ -29,6 +29,7 @@ import {
   LikedVidoesPage,
   StatsPage,
   SettingsPage,
+  SupportPage,
 } from "./pages/Compiled.js";
 
 const router = createBrowserRouter(
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
         <Route index element={<MyDetails />} />
         <Route path="password" element={<Password />}></Route>
       </Route>
+      <Route path="support" element={<SupportPage />} />
     </Route>
   )
 );
