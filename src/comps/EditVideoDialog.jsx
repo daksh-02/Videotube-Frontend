@@ -84,8 +84,6 @@ const EditVideoDialog = ({ _id, onUploadComplete, triggerComponent }) => {
         withCredentials: true,
       });
 
-      console.log(response.data);
-
       reset();
       setImageFileName("");
       setIsUploading(false);

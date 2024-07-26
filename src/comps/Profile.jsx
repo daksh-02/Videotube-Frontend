@@ -35,7 +35,6 @@ const Profile = () => {
       try {
         const response = await axios.get(`${server}/dashboard/${profile}`);
         const res = await response.data;
-        console.log(res);
         setSubChannelCount(res.data.subscribedChannelCount);
         setSubCount(res.data.subscriberCount);
         setUsername(res.data.username);
@@ -53,7 +52,6 @@ const Profile = () => {
         });
         const res = response.data;
         setIsSubscribed(res.data.status);
-        console.log(res);
       } catch (error) {
         console.log(error);
       }
@@ -78,7 +76,6 @@ const Profile = () => {
         {},
         { withCredentials: true }
       );
-      console.log(response.data);
       setIsSubscribed(!isSubscribed);
     } catch (error) {}
   };

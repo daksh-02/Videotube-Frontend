@@ -44,6 +44,7 @@ const MyDetails = () => {
       dispatch(setFullName(res.user.fullName));
 
       showToast("Account details updated successfully", "custom");
+      reset();
     } catch (error) {
       if (
         error.response &&

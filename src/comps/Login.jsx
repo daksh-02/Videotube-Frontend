@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,7 @@ import {
   ToastClose,
 } from "@/components/ui/toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ClipLoader } from "react-spinners";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +32,7 @@ const Login = () => {
   const username = useWatch({ control, name: "username" });
   const password = useWatch({ control, name: "password" });
   const [toasts, setToasts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const showToast = (message, variant = "default") => {
     const id = Date.now();
@@ -42,14 +44,15 @@ const Login = () => {
   };
 
   const login = async (data) => {
+    setIsLoading(true);
     try {
       const response = await axios.post(`${server}/users/login`, data, {
         withCredentials: true,
       });
       const res = await response.data;
-      console.log(res);
       dispatch(setEverything(res.data.user));
       showToast("Welcome back", "custom");
+      setIsOpen(false);
     } catch (error) {
       if (
         error.response &&
@@ -64,6 +67,8 @@ const Login = () => {
           "destructive"
         );
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,69 +91,75 @@ const Login = () => {
             <DialogHeader>
               <DialogTitle className="text-white">Login</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit(login)} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Username
-                </label>
-                <Controller
-                  name="username"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input
-                      id="username"
-                      type="text"
-                      autoComplete="username"
-                      className="mt-1 block w-full bg-black text-white border-gray-700"
-                      {...field}
-                    />
-                  )}
-                />
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <ClipLoader color={"#ffffff"} loading={isLoading} size={50} />
               </div>
-              <div className="relative ">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Password
-                </label>
-                <Controller
-                  name="password"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="current-password"
-                      className="mt-1 block w-full bg-black text-white border-gray-700"
-                      {...field}
-                    />
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-9 right-0 pr-3 flex "
-                >
-                  {showPassword ? <FaEye /> : <FaEyeSlash />}
-                </button>
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  variant="default"
-                  type="submit"
-                  disabled={isButtonDisabled}
-                  className="hover:bg-white hover:text-black"
-                >
-                  Login
-                </Button>
-              </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit(login)} className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Username
+                  </label>
+                  <Controller
+                    name="username"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Input
+                        id="username"
+                        type="text"
+                        autoComplete="username"
+                        className="mt-1 block w-full bg-black text-white border-gray-700"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="relative ">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Password
+                  </label>
+                  <Controller
+                    name="password"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        className="mt-1 block w-full bg-black text-white border-gray-700"
+                        {...field}
+                      />
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-9 right-0 pr-3 flex "
+                  >
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    variant="default"
+                    type="submit"
+                    disabled={isButtonDisabled}
+                    className="hover:bg-white hover:text-black"
+                  >
+                    Login
+                  </Button>
+                </div>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
         <ToastViewport />

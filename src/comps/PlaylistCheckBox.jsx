@@ -33,7 +33,6 @@ const PlaylistCheckbox = ({ playlist, videoId }) => {
         : `${server}/playlist/remove/${videoId}/${playlist._id}`;
       const response = await axios.patch(url, {}, { withCredentials: true });
       const res = response.data;
-      console.log(res);
       setShowMessage(true);
 
       setTimeout(() => {

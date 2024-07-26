@@ -22,6 +22,7 @@ import {
   ToastDescription,
   ToastClose,
 } from "@/components/ui/toast";
+import { ClipLoader } from "react-spinners";
 
 const Signup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +34,7 @@ const Signup = () => {
   const username = useWatch({ control, name: "username" });
   const password = useWatch({ control, name: "password" });
   const [toasts, setToasts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {
@@ -40,18 +42,16 @@ const Signup = () => {
   }, [fullName, email, username, password]);
 
   const showToast = (message, variant = "default") => {
-    setToasts((prevToasts) => [
-      ...prevToasts,
-      { id: Date.now(), message, variant },
-    ]);
+    const id = Date.now();
+    setToasts((prevToasts) => [...prevToasts, { id, message, variant }]);
+
     setTimeout(() => {
-      setToasts((prevToasts) =>
-        prevToasts.filter((toast) => toast.id !== Date.now())
-      );
+      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
     }, 4000);
   };
 
   const signup = async (data) => {
+    setIsLoading(true);
     try {
       await axios.post(`${server}/users/register`, data);
       const response = await axios.post(`${server}/users/login`, data, {
@@ -60,6 +60,7 @@ const Signup = () => {
       const res = await response.data;
       dispatch(setEverything(res.data.user));
       showToast("Welcome back", "custom");
+      setIsOpen(false); // Close the dialog on successful signup
     } catch (error) {
       if (
         error.response &&
@@ -74,6 +75,8 @@ const Signup = () => {
           "destructive"
         );
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,113 +101,119 @@ const Signup = () => {
             <DialogHeader>
               <DialogTitle className="text-white">Sign Up</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit(signup)} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="fullName"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Name
-                </label>
-                <Controller
-                  name="fullName"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input
-                      id="fullName"
-                      type="text"
-                      autoComplete="name"
-                      className="mt-1 block w-full bg-black text-white border-gray-700"
-                      {...field}
-                    />
-                  )}
-                />
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <ClipLoader color={"#ffffff"} loading={isLoading} size={50} />
               </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Email
-                </label>
-                <Controller
-                  name="email"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      className="mt-1 block w-full bg-black text-white border-gray-700"
-                      {...field}
-                    />
-                  )}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Username
-                </label>
-                <Controller
-                  name="username"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input
-                      id="username"
-                      type="text"
-                      autoComplete="username"
-                      className="mt-1 block w-full bg-black text-white border-gray-700"
-                      {...field}
-                    />
-                  )}
-                />
-              </div>
-              <div className="relative ">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Password
-                </label>
-                <Controller
-                  name="password"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="current-password"
-                      className="mt-1 block w-full bg-black text-white border-gray-700"
-                      {...field}
-                    />
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-9 right-0 pr-3 flex "
-                >
-                  {showPassword ? <FaEye /> : <FaEyeSlash />}
-                </button>
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  variant="default"
-                  type="submit"
-                  disabled={isButtonDisabled}
-                  className="hover:bg-white hover:text-black"
-                >
-                  Sign Up
-                </Button>
-              </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit(signup)} className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Name
+                  </label>
+                  <Controller
+                    name="fullName"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Input
+                        id="fullName"
+                        type="text"
+                        autoComplete="name"
+                        className="mt-1 block w-full bg-black text-white border-gray-700"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Email
+                  </label>
+                  <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        className="mt-1 block w-full bg-black text-white border-gray-700"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Username
+                  </label>
+                  <Controller
+                    name="username"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Input
+                        id="username"
+                        type="text"
+                        autoComplete="username"
+                        className="mt-1 block w-full bg-black text-white border-gray-700"
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="relative ">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Password
+                  </label>
+                  <Controller
+                    name="password"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        className="mt-1 block w-full bg-black text-white border-gray-700"
+                        {...field}
+                      />
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-9 right-0 pr-3 flex "
+                  >
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    variant="default"
+                    type="submit"
+                    disabled={isButtonDisabled}
+                    className="hover:bg-white hover:text-black"
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
         <ToastViewport />

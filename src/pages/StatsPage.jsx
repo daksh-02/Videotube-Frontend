@@ -16,11 +16,13 @@ import { SlUserFollowing } from "react-icons/sl";
 import { GrLike } from "react-icons/gr";
 import StatsCard from "@/Card/StatsCard";
 import { SidebarContext } from "../App.jsx";
+import { ClipLoader } from "react-spinners";
 
 const StatsPage = () => {
   const fullName = useSelector((state) => state.userInfo.fullName);
   const [stats, getStats] = useState();
   const [videos, setVidoes] = useState([]);
+  const [loading, setLoading] = useState(false);
   const isExpanded = useContext(SidebarContext);
 
   const handleDelete = (_id) => {
@@ -30,6 +32,7 @@ const StatsPage = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${server}/dashboard/stats`, {
           withCredentials: true,
@@ -39,6 +42,8 @@ const StatsPage = () => {
         setVidoes(res.data.videos);
       } catch (error) {
         console.log("Unable to fetch channel stats");
+      } finally {
+        setLoading(false);
       }
     };
     fetchStats();
@@ -97,6 +102,9 @@ const StatsPage = () => {
               ))}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex justify-center items-center mt-4">
+        {loading && <ClipLoader color={"#fff"} loading={loading} size={50} />}
       </div>
     </div>
   );

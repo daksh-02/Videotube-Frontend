@@ -5,15 +5,18 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import PlaylistDialog from "@/comps/PlaylistDialog";
 import { Button } from "@/components/ui/button";
 import { AiOutlineSave } from "react-icons/ai";
+import { ClipLoader } from "react-spinners";
 
 const LikedVidoesPage = () => {
   const [videos, setVideos] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
   const observer = useRef();
 
   useEffect(() => {
     const getLikedVidoes = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${server}/likes/videos`, {
           params: { page, limit: 6 },
@@ -26,7 +29,6 @@ const LikedVidoesPage = () => {
         }
 
         setVideos((prevVideos) => {
-          // Ensure videos are unique
           const newVideos = res.docs.filter(
             (newVideo) =>
               !prevVideos.some(
@@ -37,6 +39,8 @@ const LikedVidoesPage = () => {
         });
       } catch (error) {
         console.log("Couldn't get liked Videos");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -58,8 +62,15 @@ const LikedVidoesPage = () => {
 
   return (
     <div className="p-4 relative w-full">
-      {videos.length !== 0
-        ? videos.map((video, index) => {
+      {videos.length === 0 && !loading ? (
+        <div className="flex flex-col items-center justify-center h-screen">
+          <h1 className="mt-4 text-2xl font-bold">
+            Seems like you have not liked any videos yet
+          </h1>
+        </div>
+      ) : (
+        <div>
+          {videos.map((video, index) => {
             if (videos.length === index + 1) {
               return (
                 <div
@@ -99,8 +110,14 @@ const LikedVidoesPage = () => {
                 </div>
               );
             }
-          })
-        : null}
+          })}
+          {loading && (
+            <div className="flex justify-center items-center mt-4">
+              <ClipLoader color={"#000"} loading={loading} size={50} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
